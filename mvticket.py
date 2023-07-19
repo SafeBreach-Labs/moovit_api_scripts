@@ -1,0 +1,43 @@
+import argparse
+import logging
+
+from mvapi import get_train_ticket
+from mvgetjwt import MVJWTRequest
+
+class MVTrainTicket:
+    def __init__(self, user_key):
+        self.user_key = user_key
+        self.ticket = None
+        self.run()
+
+    def run(self):
+        self.token = MVJWTRequest(self.user_key).get()
+        self.ticket = get_train_ticket(self.user_key, self.token)
+
+    def get(self):
+        return self.ticket
+
+class MVGetPaymentAccountRequest:
+    def __init__(self, user_key):
+        self.user_key = user_key
+        self.run()
+
+    def run(self):
+        self.token = MVJWTRequest(self.user_key).get()
+
+    def get(self):
+        return get_payment_account(self.user_key, self.token).content
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-userkey', required=True, type=str, help="User_Key")
+    args = parser.parse_args()
+
+    user_key = args.userkey
+    
+    ticket = MVTrainTicket(user_key).get()
+    logging.info(ticket)
+        
+
+if __name__ == "__main__":
+    main()
